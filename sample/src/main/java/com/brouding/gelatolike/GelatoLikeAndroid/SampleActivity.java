@@ -1,0 +1,178 @@
+package com.brouding.gelatolike.GelatoLikeAndroid;
+
+import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+
+import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.ListViewCell;
+import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PLAdapter;
+import com.brouding.gelatolike.sample.R;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.huewu.pla.lib.MultiColumnListView;
+import com.huewu.pla.lib.internal.Utils;
+
+import java.util.ArrayList;
+
+public class SampleActivity extends AppCompatActivity {
+    private int SDK_INT = 0;
+    private Context mContext;
+    private RelativeLayout mainView;
+    private MultiColumnListView mainListView;
+    private LayoutInflater mInflater;
+    private View loadingView;
+    private LinearLayout searchView, scrollTopButton;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private ArrayList<ListViewCell> mList   = new ArrayList<>();
+    private PLAdapter mAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mContext = getApplicationContext();
+        mainView = new RelativeLayout(mContext);
+        Fresco.initialize(mContext);
+
+        setContentView( createView(mainView) );
+    }
+
+    private RelativeLayout createView(RelativeLayout mainView) {
+        Log.e("@@# createView = ", "CREATE !!!");
+        SDK_INT     = Build.VERSION.SDK_INT;
+        mInflater   = LayoutInflater.from(mContext);
+        loadingView = mInflater.inflate(R.layout.footer_loading_circle, null);
+
+        swipeRefreshLayout = new SwipeRefreshLayout(mContext);
+        RelativeLayout.LayoutParams swipeRefreshLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        swipeRefreshLayoutParams.addRule(RelativeLayout.BELOW, R.id.search_view);
+        swipeRefreshLayout.setLayoutParams(swipeRefreshLayoutParams);
+        swipeRefreshLayout.setColorSchemeResources(R.color.gelato_top_note, R.color.gelato_base_note);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
+                Log.e("@@# REFRESH !", "refresh");
+//                sendEvent("onInitData");
+            }
+        });
+
+        // PinterestView CORE
+        mainListView = new MultiColumnListView(mContext);
+//            RelativeLayout.LayoutParams listViewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//            mainListView.setTag("PinterestViewAndroid");
+//            mainListView.setLayoutParams(listViewParams);
+
+        // ScrollTopButton
+        scrollTopButton = new LinearLayout(mContext);
+        scrollTopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 상속받은 뷰에서 isAutoScrolling을 보고 getTop값을 갱신하며 결국 끝까지 올라간다.
+                mainListView.setAutoScrolling();
+                mainListView.smoothScrollToPosition( mainListView.getChildAt(0).getTop() );
+            }
+        });
+
+        searchView = (LinearLayout) mInflater.inflate(R.layout.header_search_view, null);
+        RelativeLayout.LayoutParams searchViewParams = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, Utils.getDpFromPx(mContext, 80));
+        searchViewParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        searchViewParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        searchView.setLayoutParams(searchViewParams);
+
+        RelativeLayout.LayoutParams scrollTopButtonParams = new RelativeLayout.LayoutParams(200, 200);
+        scrollTopButtonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        scrollTopButtonParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        scrollTopButtonParams.setMargins(0, 0, 40, 40);
+        scrollTopButton.setTag("ScrollTopButton");
+        scrollTopButton.setLayoutParams(scrollTopButtonParams);
+        mAdapter = new PLAdapter(SDK_INT, mContext, this, mInflater, mainListView, mList);
+        mainListView.addHeaderView(new View(mContext),  null, false);   // 구글에서 swipeRefreshLayout bug fix하기 전까지 이런 꼼수를 쓰라는 글 읽음.
+        mainListView.addFooterView(loadingView, null, false);
+        mainListView.setOnCustomScrollListener(customScrollListener);
+        mainListView.setAdapter(mAdapter);
+        swipeRefreshLayout.addView(mainListView);
+        mainView.addView(searchView);
+        mainView.addView(swipeRefreshLayout);
+        mainView.addView(scrollTopButton);
+
+        initView();
+
+        return mainView;
+    }
+
+    MultiColumnListView.OnCustomScrollListener customScrollListener = new MultiColumnListView.OnCustomScrollListener() {
+
+        @Override
+        public void onFirstLineForScrollTopButton() {
+            if( scrollTopButton.getVisibility() == View.VISIBLE ) {
+                scrollTopButton.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        public void onNotFirstLineForScrollTopButton() {
+            if( scrollTopButton.getVisibility() == View.INVISIBLE ) {
+                scrollTopButton.setVisibility(View.VISIBLE);
+            }
+        }
+
+        @Override
+        public void onLoadMore() {
+            Log.e("@@# getLastVisible = ", "" + mainListView.getLastVisiblePosition());
+
+            // TODO: isNextPageExist  구분.
+//            sendEvent("onLoadMoreData");
+            mainListView.onLoadMoreComplete();
+        }
+    };
+
+    private void testAppendData() {
+        for (int i = 0; i < 20; i++) {
+            ListViewCell cell = new ListViewCell(
+                    Integer.parseInt("234234"),
+                    "https://scontent-hkg3-1.cdninstagram.com/t51.2885-15/s640x640/sh0.08/e35/15802511_364343473945154_194895604323713024_n.jpg",
+                    720,
+                    800
+            );
+            mList.add(cell);
+        }
+        if( swipeRefreshLayout.isRefreshing() ) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+
+        mAdapter.notifyDataSetChanged();
+        mainListView.onTouchModeChanged(true);  // 이놈이 layoutChildren을 한다....
+    }
+
+
+
+    private void initView() {
+        setPaddings(Utils.getDpFromPx(mContext, 4));
+        setBackgroundColors("#d8d8d8"); // listViewBackground && cellBackground
+        mainListView.init(null, 2);
+        testAppendData();
+    }
+
+    private void setPaddings(int padding) {
+        mainListView.setClipToPadding(false);
+        mainListView.setPadding(padding, 0, padding, 0);
+        mAdapter.setPadding(padding);
+    }
+
+    private void setBackgroundColors(String htmlColor) {
+        int color = Color.parseColor(htmlColor);
+        mainListView.setPaintColor(color); // PLA libary버그로 인해.. headerView가 더해지면 배경색이 바뀌는 버그..
+        mainView    .setBackgroundColor(color);
+        mAdapter    .setBackgroundColor(color);
+    }
+}
