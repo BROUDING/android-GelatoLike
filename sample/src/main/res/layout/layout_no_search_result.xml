@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/no_result_view"
+    android:id="@+id/layout_no_search_result"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:visibility="gone"
     android:gravity="center">
 
     <TextView
@@ -12,6 +13,7 @@
         android:text="NO RESULTS :P"
         android:gravity="center"
         android:textSize="30sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:textColor="#333333"/>
 
 </LinearLayout>

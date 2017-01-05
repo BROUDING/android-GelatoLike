@@ -7,11 +7,17 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Images;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Item;
@@ -41,12 +47,13 @@ public class SampleActivity extends AppCompatActivity {
     private MultiColumnListView mainListView;
     private LayoutInflater mInflater;
     private View loadingView;
-    private LinearLayout searchView, scrollTopButton;
+    private LinearLayout searchView, noSearchResultView, scrollTopButton;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private ArrayList<ListViewCell> mList   = new ArrayList<>();
     private PLAdapter mAdapter;
 
+    private String searchUserId = "";
     private boolean isThereMoreData = true;
 
     @Override
@@ -77,15 +84,12 @@ public class SampleActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(true);
                 Log.e("@@# REFRESH !", "refresh");
 //                sendEvent("onInitData");
-                getInstaSampleData("0");
+                getInstaSampleData(isSearchUserIdValid(searchUserId) ? searchUserId : "design", "0");
             }
         });
 
         // PinterestView CORE
         mainListView = new MultiColumnListView(mContext);
-//            RelativeLayout.LayoutParams listViewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-//            mainListView.setTag("PinterestViewAndroid");
-//            mainListView.setLayoutParams(listViewParams);
 
         // ScrollTopButton
         scrollTopButton = new LinearLayout(mContext);
@@ -104,6 +108,32 @@ public class SampleActivity extends AppCompatActivity {
         searchViewParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
         searchView.setLayoutParams(searchViewParams);
 
+        final EditText searchText = (EditText)searchView.findViewById(R.id.search_text);
+        searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                switch (actionId) {
+                    case EditorInfo.IME_ACTION_SEARCH:
+                        searchByUserId(searchText);
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        ImageButton searchBtn = (ImageButton)searchView.findViewById(R.id.search_btn);
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchByUserId(searchText);
+            }
+        });
+
+        noSearchResultView = (LinearLayout) mInflater.inflate(R.layout.layout_no_search_result, null);
+        RelativeLayout.LayoutParams noResultViewParams = new RelativeLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        noResultViewParams.addRule(RelativeLayout.BELOW, R.id.search_view);
+        noSearchResultView.setLayoutParams(noResultViewParams);
+
         RelativeLayout.LayoutParams scrollTopButtonParams = new RelativeLayout.LayoutParams(200, 200);
         scrollTopButtonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         scrollTopButtonParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -119,10 +149,18 @@ public class SampleActivity extends AppCompatActivity {
         mainView.addView(searchView);
         mainView.addView(swipeRefreshLayout);
         mainView.addView(scrollTopButton);
+        mainView.addView(noSearchResultView);
 
         initView();
 
         return mainView;
+    }
+
+    private void searchByUserId(EditText searchText) {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(searchText.getWindowToken(), 0);
+
+        getInstaSampleData("" +searchText.getText(), "0");
     }
 
     MultiColumnListView.OnCustomScrollListener customScrollListener = new MultiColumnListView.OnCustomScrollListener() {
@@ -149,7 +187,7 @@ public class SampleActivity extends AppCompatActivity {
                 Log.e("@@# getLastCell = ", mList.get(lastPosition).getProductId());
                 // TODO: isNextPageExist  구분.
 //            sendEvent("onLoadMoreData");
-                getInstaSampleData(mList.get(lastPosition).getProductId());
+                getInstaSampleData(isSearchUserIdValid(searchUserId) ? searchUserId : "design", mList.get(lastPosition).getProductId());
                 mainListView.onLoadMoreComplete();
             }
         }
@@ -159,14 +197,14 @@ public class SampleActivity extends AppCompatActivity {
         setPaddings(Utils.getDpFromPx(mContext, 2));
         setBackgroundColors("#d8d8d8"); // listViewBackground && cellBackground
         mainListView.init(null, 2);
-//        testAppendData();
-        getInstaSampleData("0");
+        getInstaSampleData("design", "0");
     }
 
-    private void getInstaSampleData(String dataFrom)
+    private void getInstaSampleData(String userId, String dataFrom)
     {
+        searchUserId = userId;
         final boolean isInitData = dataFrom.equals("0");
-        ListService.api().getInstaSampleData("design", dataFrom).enqueue(new Callback<ModelInsta>()
+        ListService.api().getInstaSampleData(searchUserId, dataFrom).enqueue(new Callback<ModelInsta>()
         {
             @Override
             public void onResponse(Call<ModelInsta> call, Response<ModelInsta> response)
@@ -176,12 +214,15 @@ public class SampleActivity extends AppCompatActivity {
                     if( isInitData ) {
                         mList.clear();
                     }
-                    ModelInsta type2 = response.body();
-                    Random generator = new Random();
+                    ModelInsta data = response.body();
+                    Random randomGen = new Random();
 
-                    isThereMoreData = type2.isThereMoreData;
+                    isThereMoreData = data.isThereMoreData;
                     if( isThereMoreData ) {
-                        for (Item type : type2.items) {
+                        loadingView.setVisibility(View.VISIBLE);
+                        noSearchResultView.setVisibility(View.GONE);
+
+                        for (Item type : data.items) {
                             Images images = type.images;
 //                        Thumbnail thumbnail = images.thumbnail;
                             LowResolution lowResolution = images.lowResolution;
@@ -190,10 +231,13 @@ public class SampleActivity extends AppCompatActivity {
                                     type.id,
                                     lowResolution.url,
                                     lowResolution.width,
-                                    (generator.nextInt(10) + 1) % 2 == 1 ? 320 : 200
+                                    (randomGen.nextInt(10) + 1) % 2 == 1 ? 320 : 200
                             );
                             mList.add(cell);
                         }
+                    } else {
+                        loadingView.setVisibility(View.GONE);
+                        noSearchResultView.setVisibility(View.VISIBLE);
                     }
 
                     if( swipeRefreshLayout.isRefreshing() ) {
@@ -224,5 +268,9 @@ public class SampleActivity extends AppCompatActivity {
         mainListView.setPaintColor(color); // PLA libary버그로 인해.. headerView가 더해지면 배경색이 바뀌는 버그..
         mainView    .setBackgroundColor(color);
         mAdapter    .setBackgroundColor(color);
+    }
+
+    private boolean isSearchUserIdValid(String userId) {
+        return !userId.equals("") && !userId.isEmpty();
     }
 }

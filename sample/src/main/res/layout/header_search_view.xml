@@ -13,10 +13,15 @@
         android:layout_width="1dp"
         android:layout_height="50dp"
         android:layout_weight="0.8"
+        android:padding="10dp"
         android:background="#ffffff"
         android:textColor="#333333"
         android:maxLines="1"
-        android:textSize="25sp"/>
+        android:textSize="25sp"
+        android:hint="ex) design"
+        android:textColorHint="#666666"
+        android:imeOptions="actionSearch"
+        android:inputType="text" />
 
     <ImageButton
         android:id="@+id/search_btn"
