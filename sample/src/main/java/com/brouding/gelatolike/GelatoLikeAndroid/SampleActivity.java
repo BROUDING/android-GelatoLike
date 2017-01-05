@@ -24,7 +24,6 @@ import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Item;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.LowResolution;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.ModelInsta;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.StandardResolution;
-import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Thumbnail;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.service.ListService;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.ListViewCell;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PLAdapter;
@@ -68,7 +67,6 @@ public class SampleActivity extends AppCompatActivity {
     }
 
     private RelativeLayout createView(RelativeLayout mainView) {
-        Log.e("@@# createView = ", "CREATE !!!");
         SDK_INT     = Build.VERSION.SDK_INT;
         mInflater   = LayoutInflater.from(mContext);
         loadingView = mInflater.inflate(R.layout.footer_loading_circle, null);
@@ -82,8 +80,6 @@ public class SampleActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(true);
-                Log.e("@@# REFRESH !", "refresh");
-//                sendEvent("onInitData");
                 getInstaSampleData(isSearchUserIdValid(searchUserId) ? searchUserId : "design", "0");
             }
         });
@@ -140,7 +136,7 @@ public class SampleActivity extends AppCompatActivity {
         scrollTopButtonParams.setMargins(0, 0, 40, 40);
         scrollTopButton.setTag("ScrollTopButton");
         scrollTopButton.setLayoutParams(scrollTopButtonParams);
-        mAdapter = new PLAdapter(SDK_INT, mContext, this, mInflater, mainListView, mList);
+        mAdapter = new PLAdapter(SDK_INT, mContext, mInflater, mainListView, mList);
         mainListView.addHeaderView(new View(mContext),  null, false);   // 구글에서 swipeRefreshLayout bug fix하기 전까지 이런 꼼수를 쓰라는 글 읽음.
         mainListView.addFooterView(loadingView, null, false);
         mainListView.setOnCustomScrollListener(customScrollListener);
@@ -183,10 +179,6 @@ public class SampleActivity extends AppCompatActivity {
         public void onLoadMore() {
             if( isThereMoreData ) {
                 int lastPosition = mainListView.getLastVisiblePosition() - 2;
-                Log.e("@@# getLastVisible = ", "" + lastPosition);
-                Log.e("@@# getLastCell = ", mList.get(lastPosition).getProductId());
-                // TODO: isNextPageExist  구분.
-//            sendEvent("onLoadMoreData");
                 getInstaSampleData(isSearchUserIdValid(searchUserId) ? searchUserId : "design", mList.get(lastPosition).getProductId());
                 mainListView.onLoadMoreComplete();
             }
@@ -216,6 +208,7 @@ public class SampleActivity extends AppCompatActivity {
                     }
                     ModelInsta data = response.body();
                     Random randomGen = new Random();
+                    boolean isGeneralSize;
 
                     isThereMoreData = data.isThereMoreData;
                     if( isThereMoreData ) {
@@ -224,14 +217,19 @@ public class SampleActivity extends AppCompatActivity {
 
                         for (Item type : data.items) {
                             Images images = type.images;
-//                        Thumbnail thumbnail = images.thumbnail;
                             LowResolution lowResolution = images.lowResolution;
+                            StandardResolution standardResolution = images.standardResolution;
+
+                            isGeneralSize = (randomGen.nextInt(10) + 1) % 2 == 1;
 
                             ListViewCell cell = new ListViewCell(
                                     type.id,
                                     lowResolution.url,
                                     lowResolution.width,
-                                    (randomGen.nextInt(10) + 1) % 2 == 1 ? 320 : 200
+                                    isGeneralSize ? 320 : 200,
+                                    standardResolution.url,
+                                    standardResolution.width,
+                                    isGeneralSize ? 640 : 520
                             );
                             mList.add(cell);
                         }

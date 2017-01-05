@@ -21,6 +21,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.brouding.gelatolike.GelatoLikeAndroid.SampleDetailActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

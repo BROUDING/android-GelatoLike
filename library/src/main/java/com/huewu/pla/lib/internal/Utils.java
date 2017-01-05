@@ -25,4 +25,12 @@ public class Utils {
 
         return versionFitDrawable;
     }
+
+    public static int calculateHeight(int defaultColumnWidth, int realWidth, int realHeight) {
+        if( realWidth == realHeight ) {
+            return defaultColumnWidth;
+        } else {
+            return (defaultColumnWidth *realHeight) /realWidth;
+        }
+    }
 }

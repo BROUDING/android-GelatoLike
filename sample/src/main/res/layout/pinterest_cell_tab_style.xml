@@ -11,10 +11,8 @@
             android:layout_height="140dp"
             android:maxHeight="500dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_launcher"
-            fresco:placeholderImage="@drawable/ic_launcher"
+            android:background="#333333"
             fresco:roundingBorderWidth="0.5dp"
-            fresco:roundingBorderColor="@drawable/border_color"
-            fresco:roundedCornerRadius="4sp" />
+            fresco:roundingBorderColor="@drawable/border_color" />
 
 </RelativeLayout>

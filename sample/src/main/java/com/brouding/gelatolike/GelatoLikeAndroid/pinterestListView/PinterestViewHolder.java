@@ -1,23 +1,32 @@
 package com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.brouding.gelatolike.GelatoLikeAndroid.SampleActivity;
+import com.brouding.gelatolike.GelatoLikeAndroid.SampleDetailActivity;
 import com.brouding.gelatolike.sample.R;
 import com.facebook.drawee.view.SimpleDraweeView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PinterestViewHolder {
-    public Context mContext;
-    public RelativeLayout mainCellLayout;
-    public SimpleDraweeView     mainImage;
+    private Context mContext;
+    public RelativeLayout    mainCellLayout;
+    public SimpleDraweeView  mainImage;
 
-    public String               productId;
+    private final ArrayList<ListViewCell> listContent;
+    public String            productId;
+    public int               currentIndex;
 
-    public PinterestViewHolder(Context mContext, final SampleActivity mainActivity, View convertView) {
+    public PinterestViewHolder(final Context mContext, View convertView, ArrayList<ListViewCell> mList) {
         this.mContext     = mContext;
+        this.listContent  = mList;
 
         mainCellLayout    = (RelativeLayout)   convertView.findViewById(R.id.mainCellLayout);
         mainImage         = (SimpleDraweeView) convertView.findViewById(R.id.mainImage);
@@ -27,11 +36,15 @@ public class PinterestViewHolder {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("@@# view.getTag = ", "" + ((PinterestViewHolder) v.getTag()).productId);
+                Intent newIntent = new Intent(mContext, SampleDetailActivity.class);
+                newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                if( mainActivity instanceof IMethodCaller ) {
-//                    mainActivity.sendEvent("Product CLICK !!!");
-                }
+                Bundle bundle = new Bundle();
+                bundle.putInt("currentIndex", ((PinterestViewHolder) v.getTag()).currentIndex);
+                bundle.putSerializable("listData", listContent);
+                newIntent.putExtras(bundle);
+
+                mContext.startActivity(newIntent);
             }
         });
     }

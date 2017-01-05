@@ -27,6 +27,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -127,17 +128,14 @@ public class MultiColumnListView extends PLA_ListView {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		mdefaultColumnWidth  = (getMeasuredWidth() - mListPadding.left - mListPadding.right - mColumnPaddingLeft - mColumnPaddingRight) / mColumnNumber;
 		mdefaultColumnHeight = (mdefaultColumnWidth /3) *4;
-//		Log.e("@@# mdefaultWidth = ", ""  +mdefaultColumnWidth);
-//		Log.e("@@# mdefaultHeight = ", "" +mdefaultColumnHeight);
 		for( int index = 0; index < mColumnNumber; ++ index ) {
 			mColumns[index].mColumnWidth = mdefaultColumnWidth;
 			mColumns[index].mColumnLeft = mListPadding.left + mColumnPaddingLeft + mdefaultColumnWidth * index;
 		}
-//		Log.e("@@# getMeasuredWidth = ", "" +getMeasuredWidth());
 
 		mFixedColumn.mColumnWidth = getMeasuredWidth();
 		// set PinterestView's padding to 0 if it's a Header or Footer
-		mFixedColumn.mColumnLeft = 0;//mListPadding.left;
+		mFixedColumn.mColumnLeft = 0;
 	}
 
 	@Override
