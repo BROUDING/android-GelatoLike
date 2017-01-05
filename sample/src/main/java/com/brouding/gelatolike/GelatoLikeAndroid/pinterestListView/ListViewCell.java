@@ -5,19 +5,19 @@ package com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView;
  */
 
 public class ListViewCell {
-    private String imageUri;
-    private int    productId,
-                   imageWidth,
+    private String imageUri,
+                   productId;
+    private int    imageWidth,
                    imageHeight;
 
-    public ListViewCell(int productId, String imageUri, int imageWidth, int imageHeight) {
+    public ListViewCell(String productId, String imageUri, int imageWidth, int imageHeight) {
         this.productId   = productId;
         this.imageUri    = imageUri;
         this.imageWidth  = imageWidth;
         this.imageHeight = imageHeight;
     }
 
-    public int     getProductId()   { return productId; }
+    public String  getProductId()   { return productId; }
     public String  getImageUri()    { return imageUri; }
     public int     getImageWidth()  { return imageWidth; }
     public int     getImageHeight() { return imageHeight; }

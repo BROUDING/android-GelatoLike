@@ -14,7 +14,7 @@ public class PinterestViewHolder {
     public RelativeLayout mainCellLayout;
     public SimpleDraweeView     mainImage;
 
-    public int                   productId;
+    public String               productId;
 
     public PinterestViewHolder(Context mContext, final SampleActivity mainActivity, View convertView) {
         this.mContext     = mContext;

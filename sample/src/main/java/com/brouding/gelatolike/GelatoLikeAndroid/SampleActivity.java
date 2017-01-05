@@ -13,6 +13,13 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Images;
+import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Item;
+import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.LowResolution;
+import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.ModelInsta;
+import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.StandardResolution;
+import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Thumbnail;
+import com.brouding.gelatolike.GelatoLikeAndroid.network.service.ListService;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.ListViewCell;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PLAdapter;
 import com.brouding.gelatolike.sample.R;
@@ -21,6 +28,11 @@ import com.huewu.pla.lib.MultiColumnListView;
 import com.huewu.pla.lib.internal.Utils;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SampleActivity extends AppCompatActivity {
     private int SDK_INT = 0;
@@ -34,6 +46,8 @@ public class SampleActivity extends AppCompatActivity {
 
     private ArrayList<ListViewCell> mList   = new ArrayList<>();
     private PLAdapter mAdapter;
+
+    private boolean isThereMoreData = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,7 @@ public class SampleActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(true);
                 Log.e("@@# REFRESH !", "refresh");
 //                sendEvent("onInitData");
+                getInstaSampleData("0");
             }
         });
 
@@ -128,39 +143,74 @@ public class SampleActivity extends AppCompatActivity {
 
         @Override
         public void onLoadMore() {
-            Log.e("@@# getLastVisible = ", "" + mainListView.getLastVisiblePosition());
-
-            // TODO: isNextPageExist  구분.
+            if( isThereMoreData ) {
+                int lastPosition = mainListView.getLastVisiblePosition() - 2;
+                Log.e("@@# getLastVisible = ", "" + lastPosition);
+                Log.e("@@# getLastCell = ", mList.get(lastPosition).getProductId());
+                // TODO: isNextPageExist  구분.
 //            sendEvent("onLoadMoreData");
-            mainListView.onLoadMoreComplete();
+                getInstaSampleData(mList.get(lastPosition).getProductId());
+                mainListView.onLoadMoreComplete();
+            }
         }
     };
 
-    private void testAppendData() {
-        for (int i = 0; i < 20; i++) {
-            ListViewCell cell = new ListViewCell(
-                    Integer.parseInt("234234"),
-                    "https://scontent-hkg3-1.cdninstagram.com/t51.2885-15/s640x640/sh0.08/e35/15802511_364343473945154_194895604323713024_n.jpg",
-                    720,
-                    800
-            );
-            mList.add(cell);
-        }
-        if( swipeRefreshLayout.isRefreshing() ) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-
-        mAdapter.notifyDataSetChanged();
-        mainListView.onTouchModeChanged(true);  // 이놈이 layoutChildren을 한다....
-    }
-
-
-
     private void initView() {
-        setPaddings(Utils.getDpFromPx(mContext, 4));
+        setPaddings(Utils.getDpFromPx(mContext, 2));
         setBackgroundColors("#d8d8d8"); // listViewBackground && cellBackground
         mainListView.init(null, 2);
-        testAppendData();
+//        testAppendData();
+        getInstaSampleData("0");
+    }
+
+    private void getInstaSampleData(String dataFrom)
+    {
+        final boolean isInitData = dataFrom.equals("0");
+        ListService.api().getInstaSampleData("design", dataFrom).enqueue(new Callback<ModelInsta>()
+        {
+            @Override
+            public void onResponse(Call<ModelInsta> call, Response<ModelInsta> response)
+            {
+                if (response != null && response.isSuccess() && response.body() != null)
+                {
+                    if( isInitData ) {
+                        mList.clear();
+                    }
+                    ModelInsta type2 = response.body();
+                    Random generator = new Random();
+
+                    isThereMoreData = type2.isThereMoreData;
+                    if( isThereMoreData ) {
+                        for (Item type : type2.items) {
+                            Images images = type.images;
+//                        Thumbnail thumbnail = images.thumbnail;
+                            LowResolution lowResolution = images.lowResolution;
+
+                            ListViewCell cell = new ListViewCell(
+                                    type.id,
+                                    lowResolution.url,
+                                    lowResolution.width,
+                                    (generator.nextInt(10) + 1) % 2 == 1 ? 320 : 200
+                            );
+                            mList.add(cell);
+                        }
+                    }
+
+                    if( swipeRefreshLayout.isRefreshing() ) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    mAdapter.notifyDataSetChanged();
+                    mainListView.onTouchModeChanged(true);  // 이놈이 layoutChildren을 한다....
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ModelInsta> call, Throwable t)
+            {
+                t.printStackTrace();
+            }
+        });
     }
 
     private void setPaddings(int padding) {
