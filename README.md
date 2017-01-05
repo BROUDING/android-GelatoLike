@@ -20,6 +20,13 @@ Not supported Features
 * Filter
 * Handle Key Event & Arrow Scrolling..
 
+Screen Shot
+----------------
+This is a screen shot of sample activity.
+
+![Example Image][3]
+![Example Image][4]
+
 
 How to use
 -------------
@@ -111,3 +118,5 @@ License
     See the License for the specific language governing permissions and
     limitations under the License.
 
+[3]: https://github.com/BROUDING/android-GelatoLike/blob/master/gelatoLikeScreenshot0.png
+[4]: https://github.com/BROUDING/android-GelatoLike/blob/master/gelatoLikeScreenshot1.png
