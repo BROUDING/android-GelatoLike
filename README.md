@@ -2,9 +2,14 @@
 An Android app like Gelato by TMON company.
 
 
-How to install & run
-------------------------
+How to use
+-------------
+*To run Sample App.*
 
+  1. Clone project.
+
+  2. Run on your android phone or emulator.
+  
 
 Screen Shot
 ----------------
@@ -26,7 +31,7 @@ Project Description
 Homework Retrospection
 ------------------------
 I didn't have differenct devices other than LG G5, but there's no API used affects by devices. (such as Camera or MediaPlayer etc..)
-I wanted to make just like Gelato application, but I couldn't make viewPager to show left-side..
+I wanted to make just like Gelato application, but I couldn't make viewPager to show left-side like Gelato..
 
  
 Attributes
