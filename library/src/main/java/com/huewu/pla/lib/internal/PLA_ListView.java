@@ -1328,8 +1328,6 @@ public class PLA_ListView extends PLA_AbsListView {
         final boolean updateChildPressed = isPressed != child.isPressed();
         final boolean needToMeasure = !recycled || updateChildSelected || child.isLayoutRequested();
 
-//        Log.e("@@# getItemViewType = ", "" +mAdapter.getItemViewType(position));
-//        if( mAdapter.getItemViewType(position) != -2 ) {
         // Respect layout params that are already in the view. Otherwise make some up...
         // noinspection unchecked
          LayoutParams p = ( LayoutParams) child.getLayoutParams();

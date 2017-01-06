@@ -19,7 +19,7 @@ public class PLAdapter extends BaseAdapter {
     private Context mContext;
     private LayoutInflater mInflater;
     private MultiColumnListView  mainListView;
-    private ArrayList<ListViewCell> listContent;
+    private ArrayList<PinterestViewCell> listContent;
     private MainActivity mainActivity;
 
     // Styles
@@ -27,7 +27,7 @@ public class PLAdapter extends BaseAdapter {
             cellBackgroundColor,
             cellPadding;
 
-    public PLAdapter(int SDK_INT, Context mContext, MainActivity mainActivity, LayoutInflater mInflater, MultiColumnListView mainListView, ArrayList<ListViewCell> objects) {
+    public PLAdapter(int SDK_INT, Context mContext, MainActivity mainActivity, LayoutInflater mInflater, MultiColumnListView mainListView, ArrayList<PinterestViewCell> objects) {
         this.SDK_INT      = SDK_INT;
         this.mContext     = mContext;
         this.mainActivity = mainActivity;
@@ -55,18 +55,18 @@ public class PLAdapter extends BaseAdapter {
             mViewHolder = (PinterestViewHolder) convertView.getTag();
         }
 
-        ListViewCell listViewCell = listContent.get(position);
+        PinterestViewCell pinterestViewCell = listContent.get(position);
         mViewHolder.mainCellLayout.setPadding(cellPadding, cellPadding*2, cellPadding, 0);
         convertView.setBackgroundColor(cellBackgroundColor);
 
         // set mainImage Size by images
         ViewGroup.LayoutParams params = mViewHolder.mainImage.getLayoutParams();
         params.width                  = defaultColumnWidth;
-        params.height                 = Utils.calculateHeight(defaultColumnWidth, listViewCell.getLowResImageWidth(), listViewCell.getLowResImageHeight());
+        params.height                 = Utils.calculateHeight(defaultColumnWidth, pinterestViewCell.getLowResImageWidth(), pinterestViewCell.getLowResImageHeight());
         mViewHolder.mainImage   .setLayoutParams(params);
-        mViewHolder.mainImage   .setImageURI(Uri.parse(listViewCell.getLowResImageUri()));
+        mViewHolder.mainImage   .setImageURI(Uri.parse(pinterestViewCell.getLowResImageUri()));
         mViewHolder.currentIndex = position;
-        mViewHolder.productId    = listViewCell.getProductId();
+        mViewHolder.productId    = pinterestViewCell.getProductId();
 
         return convertView;
     }

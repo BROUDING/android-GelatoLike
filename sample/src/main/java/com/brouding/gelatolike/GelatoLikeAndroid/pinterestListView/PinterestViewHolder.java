@@ -1,17 +1,12 @@
 package com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.brouding.gelatolike.GelatoLikeAndroid.DetailActivity;
 import com.brouding.gelatolike.GelatoLikeAndroid.MainActivity;
 import com.brouding.gelatolike.sample.R;
 import com.facebook.drawee.view.SimpleDraweeView;
-
-import java.util.ArrayList;
 
 public class PinterestViewHolder {
     private final MainActivity mainActivity;

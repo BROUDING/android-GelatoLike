@@ -27,7 +27,6 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 /**
@@ -54,7 +53,7 @@ public class MultiColumnListView extends PLA_ListView {
 
 	public MultiColumnListView(Context context) {
 		super(context);
-//		init(null, columnNumber);					// react-native의 createViewInstance에서 param을 받을 수 없기에 init을 동적으로 가능하게 하였다. (private >> public)
+		//init(null, columnNumber);					// init을 동적으로 가능하게 하였다. (private >> public)
 	}
 
 	public MultiColumnListView(Context context, AttributeSet attrs) {
@@ -479,7 +478,6 @@ public class MultiColumnListView extends PLA_ListView {
 		@Override
 		public void onScrollStateChanged(PLA_AbsListView view, int scrollState) {
 			int lastIndex = getAdapter().getCount() - OFFSET;
-//			Log.e("@@# complete? = ", "" +loadingMoreComplete);
 			if (//scrollState == OnScrollListener.SCROLL_STATE_IDLE &&
 					visibleLastIndex == lastIndex && loadingMoreComplete) {
 

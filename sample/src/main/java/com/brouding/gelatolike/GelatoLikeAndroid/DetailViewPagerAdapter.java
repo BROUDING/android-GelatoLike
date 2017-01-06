@@ -2,12 +2,11 @@ package com.brouding.gelatolike.GelatoLikeAndroid;
 
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.ListViewCell;
+import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PinterestViewCell;
 import com.brouding.gelatolike.sample.R;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.huewu.pla.lib.internal.Utils;
@@ -21,10 +20,10 @@ import java.util.ArrayList;
 
 public class DetailViewPagerAdapter extends PagerAdapter {
     private LayoutInflater inflater;
-    private ArrayList<ListViewCell> listContent;
+    private ArrayList<PinterestViewCell> listContent;
     private int currentIndex, deviceWidth;
 
-    public DetailViewPagerAdapter(LayoutInflater inflater, ArrayList<ListViewCell> listContent, int currentIndex, int deviceWidth) {
+    public DetailViewPagerAdapter(LayoutInflater inflater, ArrayList<PinterestViewCell> listContent, int currentIndex, int deviceWidth) {
         super();
         this.inflater     = inflater;
         this.listContent  = listContent;
@@ -46,14 +45,14 @@ public class DetailViewPagerAdapter extends PagerAdapter {
         if ( listIndex >= listContent.size()) {
             listIndex = listContent.size() -1;
         }
-        ListViewCell listViewCell = listContent.get(listIndex);
+        PinterestViewCell pinterestViewCell = listContent.get(listIndex);
 
         // set mainImage Size by images
         ViewGroup.LayoutParams params = mainImage.getLayoutParams();
         params.width                  = deviceWidth;
-        params.height                 = Utils.calculateHeight(deviceWidth, listViewCell.getImageWidth(), listViewCell.getImageHeight());
+        params.height                 = Utils.calculateHeight(deviceWidth, pinterestViewCell.getImageWidth(), pinterestViewCell.getImageHeight());
         mainImage.setLayoutParams(params);
-        mainImage.setImageURI(Uri.parse(listViewCell.getImageUri()));
+        mainImage.setImageURI(Uri.parse(pinterestViewCell.getImageUri()));
 
         container.addView(view);
         return view;

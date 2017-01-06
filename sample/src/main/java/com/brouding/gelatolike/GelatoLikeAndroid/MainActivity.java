@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Images;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.Item;
@@ -27,9 +27,8 @@ import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.ModelInsta;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.StandardResolution;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.service.ListService;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.IMethodCaller;
-import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.ListViewCell;
+import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PinterestViewCell;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PLAdapter;
-import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PinterestViewHolder;
 import com.brouding.gelatolike.sample.R;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.huewu.pla.lib.MultiColumnListView;
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements IMethodCaller {
     private LinearLayout searchView, noSearchResultView, scrollTopButton;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private ArrayList<ListViewCell> mList   = new ArrayList<>();
+    private ArrayList<PinterestViewCell> mList = new ArrayList<>();
     private PLAdapter mAdapter;
 
     private String searchUserId = "";
@@ -223,9 +222,11 @@ public class MainActivity extends AppCompatActivity implements IMethodCaller {
                             LowResolution lowResolution = images.lowResolution;
                             StandardResolution standardResolution = images.standardResolution;
 
+                            // 대부분의 이미지가 정사각형 이여서, 임의로 height를 조정하기 위한 값
                             isGeneralSize = (randomGen.nextInt(10) + 1) % 2 == 1;
 
-                            ListViewCell cell = new ListViewCell(
+                            // show lowResolution images on the mainList, and standard ones for DetailView
+                            PinterestViewCell cell = new PinterestViewCell(
                                     type.id,
                                     lowResolution.url,
                                     lowResolution.width,
@@ -283,6 +284,19 @@ public class MainActivity extends AppCompatActivity implements IMethodCaller {
         bundle.putSerializable("listData", mList);
         detailViewIntent.putExtras(bundle);
 
+        // TODO: DetailActivity에서 load한 데이터를 가져오게되면 startActivityForResult로 교체
         startActivity(detailViewIntent);
+    }
+
+    private static long backPressedTime;
+    @Override
+    public void onBackPressed()
+    {
+        if (backPressedTime +2000 > System.currentTimeMillis()) {
+            super.onBackPressed();
+        } else {
+            Toast.makeText(getBaseContext(), getString(R.string.app_finish_comment), Toast.LENGTH_SHORT).show();
+        }
+        backPressedTime = System.currentTimeMillis();
     }
 }

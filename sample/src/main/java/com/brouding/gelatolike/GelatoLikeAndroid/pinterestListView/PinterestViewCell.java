@@ -2,11 +2,7 @@ package com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView;
 
 import java.io.Serializable;
 
-/**
- * Created by root on 25/10/16.
- */
-
-public class ListViewCell implements Serializable {
+public class PinterestViewCell implements Serializable {
     private String lowResImageUri,
                    imageUri,
                    productId;
@@ -15,7 +11,7 @@ public class ListViewCell implements Serializable {
                    imageWidth,
                    imageHeight;
 
-    public ListViewCell(String productId, String lowResImageUri, int lowResImageWidth, int lowResImageHeight, String imageUri, int imageWidth, int imageHeight) {
+    public PinterestViewCell(String productId, String lowResImageUri, int lowResImageWidth, int lowResImageHeight, String imageUri, int imageWidth, int imageHeight) {
         this.productId         = productId;
         this.lowResImageUri    = lowResImageUri;
         this.lowResImageWidth  = lowResImageWidth;
