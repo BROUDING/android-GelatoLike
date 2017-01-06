@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.brouding.gelatolike.GelatoLikeAndroid.SampleActivity"
+            android:name="com.brouding.gelatolike.GelatoLikeAndroid.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -22,7 +22,7 @@
         </activity>
 
         <activity
-            android:name="com.brouding.gelatolike.GelatoLikeAndroid.SampleDetailActivity"
+            android:name="com.brouding.gelatolike.GelatoLikeAndroid.DetailActivity"
             android:screenOrientation="portrait">
         </activity>
 

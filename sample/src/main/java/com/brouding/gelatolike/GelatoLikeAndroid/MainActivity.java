@@ -1,6 +1,7 @@
 package com.brouding.gelatolike.GelatoLikeAndroid;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,8 +26,10 @@ import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.LowResolution
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.ModelInsta;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.dataModel.StandardResolution;
 import com.brouding.gelatolike.GelatoLikeAndroid.network.service.ListService;
+import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.IMethodCaller;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.ListViewCell;
 import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PLAdapter;
+import com.brouding.gelatolike.GelatoLikeAndroid.pinterestListView.PinterestViewHolder;
 import com.brouding.gelatolike.sample.R;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.huewu.pla.lib.MultiColumnListView;
@@ -39,7 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SampleActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMethodCaller {
     private int SDK_INT = 0;
     private Context mContext;
     private RelativeLayout mainView;
@@ -136,7 +139,7 @@ public class SampleActivity extends AppCompatActivity {
         scrollTopButtonParams.setMargins(0, 0, 40, 40);
         scrollTopButton.setTag("ScrollTopButton");
         scrollTopButton.setLayoutParams(scrollTopButtonParams);
-        mAdapter = new PLAdapter(SDK_INT, mContext, mInflater, mainListView, mList);
+        mAdapter = new PLAdapter(SDK_INT, mContext, this, mInflater, mainListView, mList);
         mainListView.addHeaderView(new View(mContext),  null, false);   // 구글에서 swipeRefreshLayout bug fix하기 전까지 이런 꼼수를 쓰라는 글 읽음.
         mainListView.addFooterView(loadingView, null, false);
         mainListView.setOnCustomScrollListener(customScrollListener);
@@ -270,5 +273,16 @@ public class SampleActivity extends AppCompatActivity {
 
     private boolean isSearchUserIdValid(String userId) {
         return !userId.equals("") && !userId.isEmpty();
+    }
+
+    @Override
+    public void showDetailActivity(int currentIndex) {
+        Intent detailViewIntent = new Intent(this, DetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("currentIndex", currentIndex);
+        bundle.putSerializable("listData", mList);
+        detailViewIntent.putExtras(bundle);
+
+        startActivity(detailViewIntent);
     }
 }

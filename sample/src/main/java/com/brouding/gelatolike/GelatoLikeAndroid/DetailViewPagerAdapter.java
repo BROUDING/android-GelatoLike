@@ -19,12 +19,12 @@ import java.util.ArrayList;
  * Created by John on 12/8/16.
  */
 
-public class ViewPagerAdapter extends PagerAdapter {
+public class DetailViewPagerAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private ArrayList<ListViewCell> listContent;
     private int currentIndex, deviceWidth;
 
-    public ViewPagerAdapter(LayoutInflater inflater, ArrayList<ListViewCell> listContent, int currentIndex, int deviceWidth) {
+    public DetailViewPagerAdapter(LayoutInflater inflater, ArrayList<ListViewCell> listContent, int currentIndex, int deviceWidth) {
         super();
         this.inflater     = inflater;
         this.listContent  = listContent;
