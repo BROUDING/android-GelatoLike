@@ -186,7 +186,7 @@ public class SampleActivity extends AppCompatActivity {
     };
 
     private void initView() {
-        setPaddings(Utils.getDpFromPx(mContext, 2));
+        setPaddings(Utils.getDpFromPx(mContext, 1));
         setBackgroundColors("#d8d8d8"); // listViewBackground && cellBackground
         mainListView.init(null, 2);
         getInstaSampleData("design", "0");

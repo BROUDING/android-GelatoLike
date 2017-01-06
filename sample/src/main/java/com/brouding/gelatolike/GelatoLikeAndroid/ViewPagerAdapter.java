@@ -22,7 +22,6 @@ import java.util.ArrayList;
 public class ViewPagerAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private ArrayList<ListViewCell> listContent;
-    public SimpleDraweeView mainImage;
     private int currentIndex, deviceWidth;
 
     public ViewPagerAdapter(LayoutInflater inflater, ArrayList<ListViewCell> listContent, int currentIndex, int deviceWidth) {
@@ -35,25 +34,26 @@ public class ViewPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return Integer.MAX_VALUE;
+        return listContent.size() -currentIndex;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         View view = inflater.inflate(R.layout.layout_sample_detail_pager, null);
+        SimpleDraweeView mainImage = (SimpleDraweeView)view.findViewById(R.id.main_image);
 
-        mainImage = (SimpleDraweeView)view.findViewById(R.id.main_image);
-        Log.e("@@# currentIndex = ", ""+currentIndex);
-        Log.e("@@# position = ", ""+position);
-        ListViewCell listViewCell = listContent.get(currentIndex  +position);
+        int listIndex = currentIndex +position;
+        if ( listIndex >= listContent.size()) {
+            listIndex = listContent.size() -1;
+        }
+        ListViewCell listViewCell = listContent.get(listIndex);
 
         // set mainImage Size by images
         ViewGroup.LayoutParams params = mainImage.getLayoutParams();
         params.width                  = deviceWidth;
         params.height                 = Utils.calculateHeight(deviceWidth, listViewCell.getImageWidth(), listViewCell.getImageHeight());
-
-        mainImage   .setLayoutParams(params);
-        mainImage   .setImageURI(Uri.parse(listViewCell.getImageUri()));
+        mainImage.setLayoutParams(params);
+        mainImage.setImageURI(Uri.parse(listViewCell.getImageUri()));
 
         container.addView(view);
         return view;
