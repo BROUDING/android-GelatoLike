@@ -21,14 +21,13 @@ This is a screen shot of sample activity.
 
 Project Description
 ---------------------
- * Applicant's name : **Jeongwon Lee (John Lee)**
  * Development Environment : Android Studio 2.2
  * Used Libraries : [PLA](https://github.com/GDG-Korea/PinterestLikeAdapterView), [Fresco](https://github.com/facebook/fresco), 
  		    [Retrofit2](https://github.com/square/retrofit), [GsonConverter](https://github.com/square/retrofit/tree/master/retrofit-converters/gson)
  * Running Environment : LG G5(LG-F700K) / Android 6.0.1
  
  
-Homework Retrospection
+Retrospection
 ------------------------
 I didn't have differenct devices other than LG G5, but there's no API used affects by devices. (such as Camera or MediaPlayer etc..)
 I wanted to make just like Gelato application, but I couldn't make viewPager to show left-side like Gelato..
@@ -44,7 +43,7 @@ Attributes
 License
 -------
 
-    Copyright 2012 PinterestLikeAdapterView authors. All rights reserved.
+    Copyright 2017 BROUDING. All rights reserved.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
